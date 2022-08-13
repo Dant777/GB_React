@@ -1,4 +1,4 @@
-import { MessageList } from './Components/message/message-list';
+import { MessageList, Layout } from './Components';
 import './App.css';
 
 function App() {

@@ -1,9 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Message from "./message";
+import { Input as MuiInput, InputAdornment } from "@mui/material";
+import { Send } from "@mui/icons-material";
+import styled from '@emotion/styled'
+
+const Input = styled(MuiInput)`
+    color: #9a9fa1;
+    padding: 10px;
+    font-size: 15px;
+
+`;
+export const SendIcon = styled(Send)`
+  cursor: pointer;
+  color: #2b5278;
+`;
 
 export const MessageList = () => {
     const [msgList, setMsgList] = useState([]);
     const [value, setValue] = useState("");
+
+    const ref = useRef();
 
     const sendMessage = () => {
         if (value) {
@@ -18,6 +34,16 @@ export const MessageList = () => {
             sendMessage();
         }
     };
+
+    useEffect(() => {
+        if (ref.current) {
+          ref.current.scrollTo({
+            top: ref.current.scrollHeight,
+            left: 0,
+            behavior: "smooth",
+          });
+        }
+      }, [msgList]);
 
     useEffect(() => {
         const lastMsg = msgList[msgList.length - 1];
@@ -38,13 +64,19 @@ export const MessageList = () => {
 
     return (
         <>
-            <div>
+            <div ref={ref}>
                 {msgList.map((message, index) => (
                     <Message message={message} key={index} />
                 ))}
             </div>
-            <input type="text" value={value} onChange={(e) => setValue(e.target.value)} onKeyPress={handlePressInput}/>
-            <button onClick={sendMessage}>send</button>
+
+            <Input
+                fullWidth 
+                placeholder="Введите сообщение..."
+                value={value} 
+                onChange={(e) => setValue(e.target.value)}
+                onKeyPress={handlePressInput} 
+                endAdornment={<InputAdornment position="end">{value && <SendIcon onClick={sendMessage} />}</InputAdornment>} />
         </>
     );
 };
