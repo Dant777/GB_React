@@ -1,14 +1,10 @@
-import Message from './Components/Message';
-
+import { MessageList } from './Components/message/message-list';
 import './App.css';
 
-function App({txt}) {
+function App() {
   return (
     <div className="App-header">
-        <Message txt = {txt}/>
-        <Message txt = {txt}/>
-        <Message txt = {txt}/>
-        <Message txt = {txt}/>
+        <MessageList/>
     </div>
   );
 }
