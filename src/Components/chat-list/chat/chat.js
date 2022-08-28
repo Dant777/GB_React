@@ -7,15 +7,14 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from '@mui/material/Typography';
 
-export const Chat  = memo(({chat}) =>{
+export const Chat  = memo(({chat, selected}) =>{
     return(
-        <ListItem key={index + 1} disablePadding>
-        <ListItemButton>
+        <ListItem key={chat.name} disablePadding>
+        <ListItemButton selected ={selected}>
             <ListItemAvatar>
                 <Avatar alt={`Avatar n°${chat.name + 1}`} src={`#`} />
             </ListItemAvatar>
             <ListItemText
-                id={labelId}
                 primary={chat.name}
                 secondary={
                     <React.Fragment>
