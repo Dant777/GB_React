@@ -1,19 +1,19 @@
 export function ChatData() {
     const chats = [
         {
-            name: "Chat #1",
+            name: "chat1",
             messages: ["message #1"]
         },
         {
-            name: "Chat #2",
+            name: "chat2",
             messages: ["message #2"]
         },
         {
-            name: "Chat #3",
+            name: "chat3",
             messages: ["message #3"]
         },
         {
-            name: "Chat #4",
+            name: "chat4",
             messages: ["message #4"]
         }
     ]
