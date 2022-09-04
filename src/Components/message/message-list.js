@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Message from "./message";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+
 import { Input as MuiInput, InputAdornment } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import styled from '@emotion/styled'
-import { useParams } from "react-router-dom";
+
+import Message from "./message";
+
+import { sendMessage } from "../../store/messages";
 
 const Input = styled(MuiInput)`
     color: #9a9fa1;
@@ -17,34 +22,30 @@ export const SendIcon = styled(Send)`
 `;
 
 export const MessageList = () => {
-    const [msgList, setMsgList] = useState({
-        chat1: [{ author: "User", message: "test", date: new Date().toUTCString() }],
-      });
+    const  dispatch = useDispatch();
+    const { chatId } = useParams();
+    const messages = useSelector((state) => {
+        return state.message.message[chatId] ?? []
+    });
+
     const [value, setValue] = useState("");
 
     const ref = useRef();
-    const { chatId } = useParams();
     
     
-    const sendMessage = useCallback(
+    const send = useCallback(
         (message, author = "User") => {
           if (message) {
-            setMsgList((state) => ({
-              ...state,
-              [chatId]: [
-                ...(state[chatId] ?? []),
-                { author, message, date: new Date().toUTCString() },
-              ],
-            }));
+            dispatch(sendMessage(chatId, {message, author}));
             setValue("");
           }
         },
-        [chatId]
+        [chatId, dispatch]
       );
 
     const handlePressInput = ({ code }) => {
         if (code === "Enter") {
-            sendMessage(value);
+            send(value);
         }
     };
 
@@ -56,31 +57,30 @@ export const MessageList = () => {
             behavior: "smooth",
           });
         }
-      }, [msgList]);
+      }, [messages]);
 
       useEffect(() => {
-        const messages = msgList[chatId] ?? [];
+
         const lastMessage = messages[messages.length - 1];
         let timerId = null;
     
         if (messages.length && lastMessage.author === "User") {
           timerId = setTimeout(() => {
-            sendMessage("I'm bot", "Bot");
+            send("I'm bot", "Bot");
           }, 500);
     
           return () => {
             clearInterval(timerId);
           };
         }
-      }, [msgList, chatId, sendMessage]);
+      }, [send, messages]);
 
-    const messages = msgList[chatId] ?? [];
 
     return (
         <>
             <div ref={ref}>
                 {messages.map((message, index) => (
-                    <Message message={message} key={index} />
+                    <Message message={message} chatId={chatId} key={index} />
                 ))}
             </div>
 
@@ -90,7 +90,7 @@ export const MessageList = () => {
                 value={value} 
                 onChange={(e) => setValue(e.target.value)}
                 onKeyPress={handlePressInput} 
-                endAdornment={<InputAdornment position="end">{value && <SendIcon onClick={sendMessage} />}</InputAdornment>} />
+                endAdornment={<InputAdornment position="end">{value && <SendIcon onClick={send} />}</InputAdornment>} />
         </>
     );
 };
