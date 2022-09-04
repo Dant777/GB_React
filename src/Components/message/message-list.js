@@ -8,7 +8,7 @@ import styled from '@emotion/styled'
 
 import Message from "./message";
 
-import { sendMessage } from "../../store/messages";
+import { sendMessageWithBot } from "../../store/messages";
 
 const Input = styled(MuiInput)`
     color: #9a9fa1;
@@ -36,7 +36,7 @@ export const MessageList = () => {
     const send = useCallback(
         (message, author = "User") => {
           if (message) {
-            dispatch(sendMessage(chatId, {message, author}));
+            dispatch(sendMessageWithBot(chatId, {message, author}));
             setValue("");
           }
         },
