@@ -1,24 +1,49 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import { Link, useParams } from "react-router-dom";
 
-import {Chat} from "./chat"
-import {ChatData} from "./chat-data"
+import { Chat } from "./chat";
+
+import { deleteConversation, createConversation } from "../../store/conversations";
 
 export function ChatList() {
-    const chatData = ChatData();
-
-    const [chatList] = useState(chatData);
+    const conversation = useSelector((state) => state.conversation.conversation);
     const { chatId } = useParams();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const deleteConversationByName = useCallback(
+        (name) => {
+            dispatch(deleteConversation(name));
+            setTimeout(() => navigate("/chats"));
+        },
+        [dispatch]
+    );
+
+    const createConversationByName = () => {
+        const name = prompt("Введите имя: ");
+        const isValidName = conversation.find(chat => chat.name === name);
+        console.log("isValidName", isValidName);
+        if (name && isValidName == null) {
+
+            dispatch(createConversation(name));
+        } else {
+
+            alert("Не валидное имя");
+        }
+    };
 
     return (
         <List component="nav" dense sx={{ width: "100%", maxWidth: 360, bgcolor: "#17212b" }}>
-            {chatList.map((chat) => {
+            <button onClick={createConversationByName}>create chat</button>
+            {conversation.map((chat) => {
                 return (
                     <Link key={chat.name} to={`/chats/${chat.name}`}>
-                        <Chat chat={chat} selected = {chat.name === chatId}/>
+                        <Chat chat={chat} selected={chat.name === chatId} deleteConversationByName={deleteConversationByName} />
                     </Link>
                 );
             })}
